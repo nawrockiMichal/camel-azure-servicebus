@@ -134,10 +134,26 @@ expires.
 **What if a delay between redeliveries is needed?**
 
 Azure Service Bus does not support abandon-with-delay — abandoned messages are requeued
-immediately. One workaround is to catch the exception inside the processor, `Thread.sleep`,
-and rethrow, so the delay happens before Camel abandons. This is fragile: the sleep time
-plus all remaining route processing must stay well within `LockDuration`, and any mistake
-risks the lock expiring mid-sleep. Treat this as a last resort and keep the delay short.
+immediately. One workaround is to catch the exception inside the processor, sleep, and
+rethrow so the delay happens before Camel abandons.
+
+Two ways to write this delay produce identical behaviour at runtime:
+
+```java
+// Option 1 — explicit, readable for anyone
+Thread.sleep(5000);
+
+// Option 2 — Camel DSL
+redeliveryDelay(5000)
+```
+
+Both block the consumer thread for 5 seconds while the message lock is held. `Thread.sleep`
+makes this obvious to any developer. `redeliveryDelay` can create the impression that the
+delay is managed by Azure Service Bus — it is not; it is a Camel-internal sleep, and the
+same lock expiry risk applies.
+
+Either way this is fragile: the sleep time plus all remaining route processing must stay
+well within `LockDuration`. Treat it as a last resort and keep the delay short.
 
 **Key takeaway:** let the broker handle redelivery timing. `maximumRedeliveries(0)` with
 `handled(false)` is the correct pattern for transient failures in a PEEK_LOCK consumer —
