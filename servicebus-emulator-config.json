@@ -1,0 +1,50 @@
+{
+  "UserConfig": {
+    "Namespaces": [
+      {
+        "Name": "sbemulatorns",
+        "Queues": [
+          {
+            "Name": "input",
+            "Properties": {
+              "DefaultMessageTimeToLive": "PT5M",
+              "LockDuration": "PT1M",
+              "MaxDeliveryCount": 3,
+              "DeadLetteringOnMessageExpiration": true,
+              "MaxSizeInMegabytes": 1024,
+              "RequiresDuplicateDetection": false,
+              "RequiresSession": false,
+              "EnablePartitioning": false
+            }
+          },
+          {
+            "Name": "output",
+            "Properties": {
+              "DefaultMessageTimeToLive": "PT1H",
+              "LockDuration": "PT1M",
+              "MaxDeliveryCount": 10,
+              "DeadLetteringOnMessageExpiration": true,
+              "MaxSizeInMegabytes": 1024,
+              "RequiresDuplicateDetection": false,
+              "RequiresSession": false,
+              "EnablePartitioning": false
+            }
+          }
+        ],
+        "Topics": [
+          {
+            "Name": "placeholder",
+            "Subscriptions": [
+              {
+                "Name": "placeholder-sub"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Logging": {
+      "Type": "Console"
+    }
+  }
+}
